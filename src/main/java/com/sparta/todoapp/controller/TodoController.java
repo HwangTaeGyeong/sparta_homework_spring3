@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.sparta.todoapp.CommonResponse;
+import com.sparta.todoapp.repository.Comment;
 import com.sparta.todoapp.repository.Todo;
 import com.sparta.todoapp.service.TodoService;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 
-@RequestMapping("/v1.0/todo")
+@RequestMapping("/todo")
 @RestController
 @AllArgsConstructor
 public class TodoController {
@@ -89,5 +90,15 @@ public class TodoController {
                 .statusCode(HttpStatus.OK.value())
                 .msg("삭제가 완료 되었습니다.")
                 .build());
+    }
+
+    @PostMapping("/{todoId}/comments")
+    public Comment addComment(@PathVariable Long todoId, @RequestBody Comment comment) {
+        return todoService.addComment(todoId, comment.getContent(), comment.getUserId());
+    }
+
+    @GetMapping("/{todoId}/comments")
+    public List<Comment> getCommentsByTodoId(@PathVariable Long todoId) {
+        return todoService.getCommentsByTodoId(todoId);
     }
 }

@@ -1,10 +1,13 @@
 package com.sparta.todoapp.repository;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -19,6 +22,10 @@ public class Todo {
     private String userName;
     private String password;
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Comment> comments = new ArrayList<>();
 
     // 기본 생성자
     public Todo() {
@@ -43,5 +50,19 @@ public class Todo {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setTodo(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setTodo(null);
     }
 }
